@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RG Solutions | Soluciones Tecnológicas de Vanguardia</title>
+    <!-- Carga de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configuración de colores personalizada -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'rg-red': '#C03333', // Rojo profundo (Accent)
+                        'rg-dark-red': '#A32929', // Rojo más oscuro para hover
+                        'rg-cream': '#FFFBF6', // Fondo crema muy claro
+                        'rg-dark-bg': '#1a1a1a', // Fondo oscuro para un look tech
+                        'service-auto': '#3B82F6', // Azul para Automatización
+                        'service-web': '#10B981', // Verde para Web
+                        'service-soporte': '#F59E0B', // Naranja para Soporte
+                        'service-hardware': '#EF4444', // Rojo intenso para Hardware
+                        'service-alquiler': '#A855F7', // Púrpura para Alquiler
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos base */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: theme('colors.rg-cream');
+            color: theme('colors.gray.900');
+            scroll-behavior: smooth;
+        }
+
+        /* Estilo para el icono del logo (simulando el diseño de circuito) */
+        .logo-icon {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid theme('colors.rg-red');
+            border-radius: 50%;
+            position: relative;
+        }
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10px;
+            width: 10px;
+            height: 3px;
+            background-color: theme('colors.rg-red');
+            transform: translateY(-50%);
+        }
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -10px;
+            width: 10px;
+            height: 3px;
+            background-color: theme('colors.rg-red');
+            transform: translateY(-50%);
+        }
+        
+        /* Estilos específicos para el Slider */
+        .slider-item {
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .slider-item.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        /* Efecto de patrón tecnológico en el Hero */
+        .tech-pattern {
+            background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Clase para ocultar vistas (SPA) */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Botón flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+
+        /* Animación para Notificación Flotante */
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translate(-50%, -20px); }
+            10%, 90% { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .notification-show {
+            animation: fadeInOut 4s ease-in-out;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Botón flotante de WhatsApp (Permanente) -->
+    <a href="https://wa.me/51983519503" target="_blank" class="whatsapp-float bg-green-500 p-4 rounded-full shadow-2xl text-white">
+        <img src="img/Whatsapp.png" alt="Icono de WhatsApp" class="w-9 h-9">
+    </a>
+
+    <!-- Mensaje flotante de notificacion (reemplaza alert) -->
+    <div id="notification-message" class="fixed top-5 left-1/2 transform -translate-x-1/2 hidden bg-rg-red text-white p-3 rounded-xl shadow-2xl z-[1001] opacity-0"></div>
+
+    <!-- Navegación y Encabezado (Sticky) -->
+    <header class="sticky top-0 z-50 bg-rg-cream shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#" class="flex items-center space-x-2 text-rg-red" onclick="showView('home'); return false;">
+                    <span class="logo-icon"></span>
+                    <img src="img/LOGOS/sin fondo logo.png" alt="" class="w-40 max-h-16 h-auto object-contain"> 
+                </a>
+                <!-- Menú de Escritorio -->
+                <div class="hidden md:flex space-x-6 lg:space-x-8">
+                    <a href="#" onclick="showView('home'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105">Inicio</a>
+                    <a href="#" onclick="showView('services'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105">Servicios</a>
+                    <a href="#" onclick="showView('catalog'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105">Catálogo</a>
+                    <a href="#" onclick="showView('quotation'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105 bg-rg-red text-white py-1 px-3 rounded-full hover:bg-rg-dark-red">Cotización</a>
+                    <a href="#" onclick="showView('about'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105">Nosotros</a>
+                    <a href="#" onclick="showView('contact'); return false;" class="text-lg text-gray-700 hover:text-rg-red transition duration-300 font-medium hover:scale-105">Contacto</a>
+                </div>
+                <!-- Botón de Menú Móvil -->
+                <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </nav>
+        </div>
+        <!-- Menú Móvil (oculto por defecto) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-rg-cream pb-4 shadow-xl">
+            <a href="#" onclick="showView('home'); closeMobileMenu(); return false;" class="block px-4 py-2 text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">Inicio</a>
+            <a href="#" onclick="showView('services'); closeMobileMenu(); return false;" class="block px-4 py-2 text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">Servicios</a>
+            <a href="#" onclick="showView('catalog'); closeMobileMenu(); return false;" class="block px-4 py-2 text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">Catálogo</a>
+            <a href="#" onclick="showView('quotation'); closeMobileMenu(); return false;" class="block px-4 py-2 bg-rg-red text-white hover:bg-rg-dark-red transition duration-300">Cotización</a>
+            <a href="#" onclick="showView('about'); closeMobileMenu(); return false;" class="block px-4 py-2 text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">Nosotros</a>
+            <a href="#" onclick="showView('contact'); closeMobileMenu(); return false;" class="block px-4 py-2 text-gray-700 hover:bg-rg-red hover:text-white transition duration-300">Contacto</a>
+        </div>
+    </header>
+
+    <main id="app-content">
+
+        <!-- VISTA 1: PÁGINA PRINCIPAL (#home) -->
+        <div id="home" class="view active">
+            <!-- Sección Hero con Slider -->
+            <section id="hero-slider-home" class="relative h-[60vh] md:h-[80vh] bg-rg-dark-bg overflow-hidden shadow-2xl">
+                <!-- Capa de patrón sutil -->
+                <div class="absolute inset-0 tech-pattern z-0 opacity-10"></div>
+                
+                <!-- Contenedor del Slider (Mantiene la lógica JS anterior) -->
+                <div id="slider-container" class="relative w-full h-full">
+
+                    <!-- Diapositiva 1: Desarrollo de Software (Sin cambios) -->
+                    <div class="slider-item active flex items-center justify-center text-white bg-rg-red/90 p-4 md:p-10">
+                        <div class="max-w-5xl mx-auto text-center z-10">
+                            <span class="text-xl font-mono tracking-widest uppercase mb-4 block">Soluciones Digitales</span>
+                            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight">
+                                Desarrollo de Software a Medida
+                            </h1>
+                            <p class="text-lg md:text-xl font-light mb-10 opacity-90 max-w-2xl mx-auto">
+                                Transformamos tus ideas en aplicaciones robustas, escalables y orientadas al futuro.
+                            </p>
+                            <a href="#" onclick="showView('services'); return false;" class="inline-block bg-white text-rg-red font-bold py-4 px-10 rounded-xl shadow-2xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                                Explorar Servicios
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Diapositiva 2: Soporte Técnico (ACTUALIZADA - Sin Cloud) -->
+                    <div class="slider-item flex items-center justify-center text-white bg-service-soporte/90 p-4 md:p-10">
+                        <div class="max-w-5xl mx-auto text-center z-10">
+                            <span class="text-xl font-mono tracking-widest uppercase mb-4 block text-rg-dark-bg">Continuidad del Negocio</span>
+                            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight">
+                                Soporte Técnico Empresarial
+                            </h1>
+                            <p class="text-lg md:text-xl font-light mb-10 opacity-90 max-w-2xl mx-auto">
+                                Garantizamos la continuidad de tu negocio con soporte proactivo y soluciones rápidas.
+                            </p>
+                            <a href="#" onclick="showView('service-soporte'); return false;" class="inline-block bg-white text-service-soporte font-bold py-4 px-10 rounded-xl shadow-2xl hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                                Ver Planes de Soporte
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Diapositiva 3: Ciberseguridad (ACTUALIZADA - Reemplazando Cloud) -->
+                    <div class="slider-item flex items-center justify-center text-white bg-gray-800/90 p-4 md:p-10">
+                        <div class="max-w-5xl mx-auto text-center z-10">
+                            <span class="text-xl font-mono tracking-widest uppercase mb-4 block text-rg-red">Automatización</span>
+                            <h1 class="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight">
+                                Automatiza y Acelera tu Empresa
+                            </h1>
+                            <p class="text-lg md:text-xl font-light mb-10 opacity-90 max-w-2xl mx-auto">
+                                Implementamos Chatbots con IA y flujos de trabajo que ahorran cientos de horas de trabajo manual.
+                            </p>
+                            <a href="#" onclick="showView('service-auto'); return false;" class="inline-block bg-rg-red text-white font-bold py-4 px-10 rounded-xl shadow-2xl hover:bg-rg-dark-red transition duration-300 transform hover:scale-105">
+                                Descubrir Automatización
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Controles del Slider (Puntos y Flechas) -->
+                <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex space-x-3">
+                    <button class="slider-dot w-3 h-3 bg-white rounded-full opacity-50 transition duration-300" data-slide="0"></button>
+                    <button class="slider-dot w-3 h-3 bg-white rounded-full opacity-50 transition duration-300" data-slide="1"></button>
+                    <button class="slider-dot w-3 h-3 bg-white rounded-full opacity-50 transition duration-300" data-slide="2"></button>
+                </div>
+
+                <!-- Flechas de navegación -->
+                <button id="prev-slide" class="absolute top-1/2 left-4 transform -translate-y-1/2 z-20 text-white p-3 rounded-full bg-black/30 hover:bg-black/60 transition duration-300 hidden md:block">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button id="next-slide" class="absolute top-1/2 right-4 transform -translate-y-1/2 z-20 text-white p-3 rounded-full bg-black/30 hover:bg-black/60 transition duration-300 hidden md:block">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </section>
+
+            <!-- Sección de Bloques de Servicios (4 Bloques) - (Sin cambios, ya estaba bien) -->
+            <section class="py-16 md:py-20 bg-rg-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">
+                        Nuestra Propuesta de Valor
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        
+                        <!-- Bloque 1: Automatización -->
+                        <a href="#" onclick="showView('service-auto'); return false;" class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-service-auto hover:shadow-xl transition duration-300 transform hover:-translate-y-1 block">
+                            <div class="text-service-auto mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.617 7.08c-.687-.69-.974-1.57-.962-2.522.016-1.127.319-2.18.917-3.085.6-.905.932-1.954.916-3.081.012-.952-.275-1.832-.962-2.522l-.707-.707c-.41-.41-.707-1.01-.707-1.707V3a1 1 0 00-1-1h-6a1 1 0 00-1 1v.707c0 .69-.297 1.29-.707 1.707l-.707.707c-.687.69-.974 1.57-.962 2.522.016 1.127.319 2.18.917 3.085.6.905.932 1.954.916 3.081.012.952-.275 1.832-.962 2.522l-.707.707c-.41.41-.707 1.01-.707 1.707V21a1 1 0 001 1h6a1 1 0 001-1v-.707c0-.69.297-1.29.707-1.707l.707-.707z"></path></svg></div>
+                            <h3 class="text-xl font-bold mb-2">Automatización de Procesos</h3>
+                            <p class="text-gray-600 text-sm">Chatbots, IA y Workflows para optimizar la eficiencia y reducir errores operativos.</p>
+                        </a>
+                        
+                        <!-- Bloque 2: Desarrollo Web -->
+                        <a href="#" onclick="showView('service-web'); return false;" class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-service-web hover:shadow-xl transition duration-300 transform hover:-translate-y-1 block">
+                            <div class="text-service-web mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m6 0a9 9 0 019-9m-3.5 13.5l-3.5 3.5-3.5-3.5"></path></svg></div>
+                            <h3 class="text-xl font-bold mb-2">Creación de Páginas Web</h3>
+                            <p class="text-gray-600 text-sm">Diseño y desarrollo de sitios informativos, corporativos y landing pages de alto impacto.</p>
+                        </a>
+
+                        <!-- Bloque 3: Soporte Técnico -->
+                        <a href="#" onclick="showView('service-soporte'); return false;" class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-service-soporte hover:shadow-xl transition duration-300 transform hover:-translate-y-1 block">
+                            <div class="text-service-soporte mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <h3 class="text-xl font-bold mb-2">Soporte Técnico Empresarial</h3>
+                            <p class="text-gray-600 text-sm">Mantenimiento preventivo, optimización y soluciones rápidas para la continuidad del negocio.</p>
+                        </a>
+
+                        <!-- Bloque 4: Hardware -->
+                        <a href="#" onclick="showView('catalog'); return false;" class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-service-hardware hover:shadow-xl transition duration-300 transform hover:-translate-y-1 block">
+                            <div class="text-service-hardware mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-75-.95m0-13l-7-7-7 7M12 4v16"></path></svg></div>
+                            <h3 class="text-xl font-bold mb-2">Alquiler y Venta de Equipos</h3>
+                            <p class="text-gray-600 text-sm">Mini PC, Laptops y Servidores de alto rendimiento para venta y alquiler temporal.</p>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Botones Principales de Acción -->
+            <section class="bg-rg-red py-12">
+                <div class="max-w-xl mx-auto px-4 text-center space-y-4 sm:space-y-0 sm:flex sm:justify-center sm:space-x-8">
+                    <a href="#" onclick="showView('quotation'); return false;" class="w-full sm:w-auto inline-block bg-white text-rg-red font-bold py-3 px-10 rounded-full shadow-lg hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                        Solicitar Cotización
+                    </a>
+                    <a href="https://wa.me/51983519503" target="_blank" class="w-full sm:w-auto inline-flex items-center justify-center bg-green-500 text-white font-bold py-3 px-10 rounded-full shadow-lg hover:bg-green-600 transition duration-300 transform hover:scale-105">
+                        <img src="img/Whatsapp.png" alt="Icono de WhatsApp" class="w-7 h-7 mr-3">
+                        Hablar por WhatsApp
+                    </a>
+                </div>
+            </section>
+
+            <!-- Logos de Confianza (Mock) -->
+            <section class="py-16 md:py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <p class="text-xl text-gray-500 mb-8 font-semibold">
+                        Empresas que confían en nuestras soluciones
+                    </p>
+                    <div class="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-70">
+                        <span class="text-3xl font-extrabold text-gray-400">Xxxxx</span>
+                        <span class="text-3xl font-extrabold text-gray-400">Xxxxxx</span>
+                        <span class="text-3xl font-extrabold text-gray-400">Xxxxxxxx</span>
+                        <span class="text-3xl font-extrabold text-gray-400">Xxxxxxx</span>
+                        <span class="text-3xl font-extrabold text-gray-400">Xxxxx</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VISTA 2: ÍNDICE DE SERVICIOS (#services) - (Sin cambios, ya estaba bien) -->
+        <div id="services" class="view">
+            <section class="py-16 md:py-24 bg-rg-cream">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-5xl font-extrabold text-gray-900 text-center mb-4">
+                        Nuestras Soluciones Tecnológicas
+                    </h1>
+                    <p class="text-xl text-gray-600 text-center mb-16 max-w-3xl mx-auto">
+                        Selecciona una línea de servicio para ver detalles, casos de uso y planes de costos.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                        <a href="#" onclick="showView('service-auto'); return false;" class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-service-auto hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 block">
+                            <div class="text-service-auto mb-4"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.617 7.08c-.687-.69-.974-1.57-.962-2.522.016-1.127.319-2.18.917-3.085.6-.905.932-1.954.916-3.081.012-.952-.275-1.832-.962-2.522l-.707-.707c-.41-.41-.707-1.01-.707-1.707V3a1 1 0 00-1-1h-6a1 1 0 00-1 1v.707c0 .69-.297 1.29-.707 1.707l-.707.707c-.687.69-.974 1.57-.962 2.522.016 1.127.319 2.18.917 3.085.6.905.932 1.954.916 3.081.012.952-.275 1.832-.962 2.522l-.707.707c-.41.41-.707 1.01-.707 1.707V21a1 1 0 001 1h6a1 1 0 001-1v-.707c0-.69.297-1.29.707-1.707l.707-.707z"></path></svg></div>
+                            <h2 class="text-2xl font-bold mb-2 text-gray-900">Automatización de Procesos e IA</h2>
+                            <p class="text-gray-600">Implementamos Chatbots inteligentes y Workflows para optimizar tu tiempo y recursos.</p>
+                        </a>
+
+                        <a href="#" onclick="showView('service-web'); return false;" class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-service-web hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 block">
+                            <div class="text-service-web mb-4"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m6 0a9 9 0 019-9m-3.5 13.5l-3.5 3.5-3.5-3.5"></path></svg></div>
+                            <h2 class="text-2xl font-bold mb-2 text-gray-900">Desarrollo Web y Estrategia</h2>
+                            <p class="text-gray-600">Diseño de páginas web informativas, landing pages y soluciones de presencia digital.</p>
+                        </a>
+
+                        <a href="#" onclick="showView('service-soporte'); return false;" class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-service-soporte hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 block">
+                            <div class="text-service-soporte mb-4"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            <h2 class="text-2xl font-bold mb-2 text-gray-900">Soporte Técnico Empresarial</h2>
+                            <p class="text-gray-600">Planes de mantenimiento preventivo y correctivo para mantener tus sistemas siempre operativos.</p>
+                        </a>
+
+                        <a href="#" onclick="showView('service-hardware'); return false;" class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-service-hardware hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 block">
+                            <div class="text-service-hardware mb-4"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-75-.95m0-13l-7-7-7 7M12 4v16"></path></svg></div>
+                            <h2 class="text-2xl font-bold mb-2 text-gray-900">Venta de Hardware</h2>
+                            <p class="text-gray-600">Catálogo de equipos de alto rendimiento (Mini PC, Laptops, Servidores) para venta directa.</p>
+                        </a>
+
+                        <a href="#" onclick="showView('service-alquiler'); return false;" class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-service-alquiler hover:shadow-2xl transition duration-300 transform hover:-translate-y-2 block">
+                            <div class="text-service-alquiler mb-4"><svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-4 4V3m-4 12v-2m8 2v-2m-4 2v-2m-4 4h8a2 2 0 002-2V7a2 2 0 00-2-2H8a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                            <h2 class="text-2xl font-bold mb-2 text-gray-900">Alquiler de Equipos</h2>
+                            <p class="text-gray-600">Soluciones flexibles de alquiler por semana o mes para eventos, capacitaciones o proyectos temporales.</p>
+                        </a>
+
+                        <div class="flex items-center justify-center">
+                             <a href="#" onclick="showView('quotation'); return false;" class="bg-rg-red text-white py-4 px-8 rounded-xl shadow-lg hover:bg-rg-dark-red transition duration-300 font-bold transform hover:scale-105">
+                                 Solicitar Cotización
+                             </a>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- VISTA 2.A: DETALLE DE AUTOMATIZACIÓN (#service-auto) - (Sin cambios, ya estaba bien) -->
+        <div id="service-auto" class="view">
+             <section class="py-16 md:py-24 bg-rg-cream">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-5xl font-extrabold text-service-auto text-center mb-4">
+                         Automatización de Procesos e Inteligencia Artificial
+                     </h1>
+                     <p class="text-xl text-gray-600 text-center mb-16 max-w-4xl mx-auto">
+                         Deja que la IA y los Workflows trabajen por ti. Reducimos el trabajo manual, los errores y los costos operativos.
+                     </p>
+
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                         <div class="space-y-8">
+                             <!-- Pila de Servicios -->
+                             <div class="p-6 rounded-xl bg-white shadow-lg border-l-4 border-service-auto">
+                                 <h3 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                                     <svg class="w-6 h-6 mr-2 text-service-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                     Chatbots 24/7 y Experiencia IA
+                                 </h3>
+                                 <ul class="list-disc list-inside text-lg text-gray-700 space-y-1 ml-4">
+                                     <li>Chatbots personalizados para WhatsApp, Web, y Telegram.</li>
+                                     <li>Integración de modelos de Lenguaje (IA) para respuestas complejas.</li>
+                                 </ul>
+                             </div>
+                             <div class="p-6 rounded-xl bg-white shadow-lg border-l-4 border-service-auto">
+                                 <h3 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                                      <svg class="w-6 h-6 mr-2 text-service-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8"></path></svg>
+                                     Flujos de Trabajo (Workflows)
+                                 </h3>
+                                 <ul class="list-disc list-inside text-lg text-gray-700 space-y-1 ml-4">
+                                     <li>Automatización con n8n, Make, Python y desarrollo de API personalizadas.</li>
+                                     <li>Automatización de tareas repetitivas (facturación, gestión de leads, reportes).</li>
+                                 </ul>
+                             </div>
+                             <div class="p-6 rounded-xl bg-white shadow-lg border-l-4 border-service-auto">
+                                 <h3 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                                      <svg class="w-6 h-6 mr-2 text-service-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v-2a2 2 0 012-2h12a2 2 0 012 2v2m-6-8l-4 4m0 0l4 4m-4-4h8"></path></svg>
+                                     Integración de Sistemas
+                                 </h3>
+                                 <p class="text-lg text-gray-700">Xxxxxxxx</p>
+                             </div>
+                         </div>
+                         
+                         <!-- Bloque Didáctico y Costos -->
+                         <div class="p-6 bg-gray-100 rounded-2xl shadow-inner space-y-8">
+                             <h3 class="text-3xl font-bold text-gray-900 mb-4">Caso de Éxito: Antes vs. Después</h3>
+                             <div class="bg-white p-4 rounded-xl shadow-md">
+                                 <p class="text-xl font-semibold text-rg-red mb-2">ANTES: Proceso Manual de Leads</p>
+                                 <p class="text-gray-700 italic">4 horas diarias perdidas. Tasa de error del 15% en el ingreso de datos al CRM. Clientes esperan 30 minutos por respuesta.</p>
+                             </div>
+                             <div class="bg-white p-4 rounded-xl shadow-md">
+                                 <p class="text-xl font-semibold text-service-auto mb-2">DESPUÉS: Proceso Automatizado</p>
+                                 <p class="text-gray-700 italic">0 horas de trabajo manual. Tasa de error menor al 1%. Respuestas instantáneas vía Chatbot. **Ahorro de $1,500/mes**.</p>
+                             </div>
+
+                             <div class="mt-8 text-center">
+                                 <h4 class="font-bold text-xl mb-3">Tu Inversión Mensual Comienza</h4>
+                                 <p class="text-4xl font-extrabold text-rg-red">Desde S/ XXX / mes</p>
+                                 <p class="text-sm text-gray-500 mt-1">Incluye plataforma básica, alojamiento y hasta 1,000 interacciones.</p>
+                                 <a href="#" onclick="fillQuotation('Automatización de Procesos'); showView('quotation'); return false;" class="inline-block bg-service-auto text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 mt-6">
+                                     Solicitar Cotización Personalizada
+                                 </a>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </section>
+        </div>
+
+        <!-- VISTA 2.B: DETALLE DE DESARROLLO WEB (#service-web) - (Actualizada con botones en paquetes) -->
+        <div id="service-web" class="view">
+            <section class="py-16 md:py-24 bg-rg-cream">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-5xl font-extrabold text-service-web text-center mb-4">
+                         Desarrollo Web y Presencia Digital
+                     </h1>
+                     <p class="text-xl text-gray-600 text-center mb-16 max-w-4xl mx-auto">
+                         Creamos tu identidad digital desde cero: diseño, desarrollo, optimización y puesta en marcha.
+                     </p>
+
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                         <div class="lg:order-2">
+                             <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">Paquetes Prediseñados</h2>
+                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                                 <!-- Paquete Básico - AHORA ES UN BOTÓN CON JS -->
+                                 <a href="#" onclick="fillQuotation('Paquete Web Básico'); showView('quotation'); return false;" class="p-5 border rounded-xl shadow-md bg-white hover:bg-gray-50 transition duration-300 transform hover:scale-105 block">
+                                     <h4 class="font-bold text-xl text-gray-800 mb-1">Básico</h4>
+                                     <p class="text-sm text-gray-500">Web Estática / 5 Secciones</p>
+                                     <p class="text-rg-dark-red text-3xl font-extrabold mt-3">S/ XXX</p>
+                                 </a>
+                                 <!-- Paquete Profesional - AHORA ES UN BOTÓN CON JS -->
+                                 <a href="#" onclick="fillQuotation('Paquete Web Profesional'); showView('quotation'); return false;" class="p-5 border-4 border-service-web rounded-xl shadow-xl bg-service-web/10 relative hover:bg-service-web/20 transition duration-300 transform hover:scale-105 block">
+                                     <span class="absolute top-0 right-0 bg-rg-red text-white text-xs px-2 py-1 rounded-bl-lg">POPULAR</span>
+                                     <h4 class="font-bold text-xl text-gray-800 mb-1">Profesional</h4>
+                                     <p class="text-sm text-gray-500">Landing Optimizada / SSL / Dominio x 1 año</p>
+                                     <p class="text-service-web text-3xl font-extrabold mt-3">S/ XXX</p>
+                                 </a>
+                                 <!-- Paquete Empresarial - AHORA ES UN BOTÓN CON JS -->
+                                 <a href="#" onclick="fillQuotation('Paquete Web Empresarial'); showView('quotation'); return false;" class="p-5 border rounded-xl shadow-md bg-white hover:bg-gray-50 transition duration-300 transform hover:scale-105 block">
+                                     <h4 class="font-bold text-xl text-gray-800 mb-1">Empresarial</h4>
+                                     <p class="text-sm text-gray-500">Web Dinámica / Integración a CRM / SEO Básico</p>
+                                     <p class="text-rg-dark-red text-3xl font-extrabold mt-3">S/ XXX+</p>
+                                 </a>
+                             </div>
+                             <p class="text-sm text-gray-500 mt-4 text-center">Todos los paquetes incluyen diseño responsive y optimización móvil.</p>
+
+                             <h2 class="text-3xl font-bold text-gray-900 mt-12 mb-6 border-b pb-2">Ejemplos de Webs</h2>
+                             <div class="space-y-4">
+                                 <div class="p-4 bg-gray-100 rounded-lg">
+                                     <p class="font-semibold text-gray-800">Sitio Informativo Corporativo:</p>
+                                     <p class="text-sm text-gray-600">Perfecto para presentar tu empresa, misión, y servicios de forma elegante.</p>
+                                 </div>
+                                 <div class="p-4 bg-gray-100 rounded-lg">
+                                     <p class="font-semibold text-gray-800">Landing Page de Conversión:</p>
+                                     <p class="text-sm text-gray-600">Diseñada para una única acción: captar leads o vender un producto específico.</p>
+                                 </div>
+                             </div>
+                         </div>
+
+                         <div class="lg:order-1 space-y-8">
+                             <div class="p-6 rounded-xl bg-white shadow-lg border-l-4 border-service-web">
+                                 <h3 class="text-2xl font-bold text-gray-900 mb-3 flex items-center">
+                                     <svg class="w-6 h-6 mr-2 text-service-web" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                                     Características del Desarrollo
+                                 </h3>
+                                 <ul class="list-disc list-inside text-lg text-gray-700 space-y-1 ml-4">
+                                     <li>Páginas web 100% informativas y estáticas (máxima velocidad).</li>
+                                     <li>Formularios avanzados con envío a email o Google Sheets.</li>
+                                     <li>Configuración de Hosting, Dominio y Certificado SSL (opcional).</li>
+                                 </ul>
+                             </div>
+                             <a href="#" onclick="fillQuotation('Desarrollo Web'); showView('quotation'); return false;" class="w-full inline-block bg-service-web text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-green-700 transition duration-300 text-center">
+                                 Solicitar una Propuesta Web
+                             </a>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+        </div>
+        
+        <!-- VISTA 2.C: DETALLE DE SOPORTE TÉCNICO (#service-soporte) - (Sin cambios, ya estaba bien) -->
+        <div id="service-soporte" class="view">
+             <section class="py-16 md:py-24 bg-rg-cream">
+                 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-5xl font-extrabold text-service-soporte text-center mb-4">
+                         Soporte Técnico y Mantenimiento Empresarial
+                     </h1>
+                     <p class="text-xl text-gray-600 text-center mb-16 max-w-4xl mx-auto">
+                         Garantizamos la continuidad operativa de tu negocio con planes de soporte preventivo y correctivo.
+                     </p>
+                     
+                     <div class="lg:flex lg:space-x-12">
+                         <!-- Cobertura -->
+                         <div class="lg:w-1/2 mb-10 lg:mb-0 space-y-6">
+                             <h2 class="text-3xl font-bold text-gray-900 mb-4 border-b pb-2">Nuestra Cobertura</h2>
+                             <ul class="space-y-3">
+                                 <li class="flex items-start text-lg text-gray-700">
+                                     <svg class="w-6 h-6 text-service-soporte mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6-6a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v5"></path></svg>
+                                     **Mantenimiento** Preventivo, Correctivo y Limpieza/Optimización.
+                                 </li>
+                                 <li class="flex items-start text-lg text-gray-700">
+                                     <svg class="w-6 h-6 text-service-soporte mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v-1a4 4 0 014-4h8a4 4 0 014 4v1m-6-4l-4-4m0 0l-4 4m4-4v12"></path></svg>
+                                     **Instalación** y configuración de programas y sistemas operativos.
+                                 </li>
+                                 <li class="flex items-start text-lg text-gray-700">
+                                     <svg class="w-6 h-6 text-service-soporte mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2m-7 4v3m-4-3v3m8-3v3m-3-12a2 2 0 012-2h4a2 2 0 012 2v2a2 2 0 01-2 2h-4a2 2 0 01-2-2v-2z"></path></svg>
+                                     **Redes** y estructuras básicas de oficina, WiFi y cableado.
+                                 </li>
+                                 <li class="flex items-start text-lg text-gray-700">
+                                     <svg class="w-6 h-6 text-service-soporte mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                     **Backup & Recuperación** de datos críticos.
+                                 </li>
+                             </ul>
+                         </div>
+
+                         <!-- Planes -->
+                         <div class="lg:w-1/2">
+                             <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">Planes Mensuales (Por Equipo)</h2>
+                              <table class="w-full text-left border-collapse bg-white rounded-xl shadow-lg">
+                                  <thead>
+                                      <tr class="bg-service-soporte/20">
+                                          <th class="p-4 border-b-2">Plan</th>
+                                          <th class="p-4 border-b-2">Cobertura</th>
+                                          <th class="p-4 border-b-2">Costo (por equipo)</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr class="hover:bg-gray-50 transition duration-300">
+                                          <td class="p-4 border-b font-bold text-gray-800">Básico</td>
+                                          <td class="p-4 border-b">Soporte Remoto 5x5, Mantenimiento trimestral.</td>
+                                          <td class="p-4 border-b text-2xl font-extrabold text-rg-red">S/ 80</td>
+                                      </tr>
+                                      <tr class="hover:bg-gray-50 transition duration-300">
+                                          <td class="p-4 font-bold text-gray-800">Premium</td>
+                                          <td class="p-4">Remoto 24/7, 1 Visita Mensual, Correctivo ilimitado.</td>
+                                          <td class="p-4 text-2xl font-extrabold text-rg-red">S/ 150</td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                              <a href="#" onclick="fillQuotation('Soporte Técnico'); showView('quotation'); return false;" class="w-full inline-block bg-service-soporte text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-yellow-600 transition duration-300 text-center mt-6">
+                                  Contratar Plan de Soporte
+                              </a>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+        </div>
+
+        <!-- VISTA 2.D: DETALLE DE VENTA HARDWARE (#service-hardware) - (Sin cambios, ya estaba bien) -->
+        <div id="service-hardware" class="view">
+            <section class="py-16 md:py-24 bg-rg-cream">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-5xl font-extrabold text-service-hardware text-center mb-4">
+                         Venta y Asesoría en Hardware
+                     </h1>
+                     <p class="text-xl text-gray-600 text-center mb-16 max-w-4xl mx-auto">
+                         Te asesoramos y proveemos equipos de marcas líderes, garantizando durabilidad y rendimiento.
+                     </p>
+
+                     <div class="lg:flex lg:space-x-12">
+                         <!-- Catálogo Destacado (Mini PCs) -->
+                         <div class="lg:w-2/3 mb-10 lg:mb-0">
+                             <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">Destacados: Mini PCs y Laptops</h2>
+                             <p class="text-lg text-gray-700 mb-6">Mini PCs son la solución ideal para reducir espacio y consumo energético en oficinas modernas. Laptops empresariales de alta gama.</p>
+                             
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                 <!-- Mini PC Pro G2 -->
+                                 <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-service-hardware">
+                                     <div class="h-24 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">Imagen Mini PC</div>
+                                     <h3 class="text-xl font-bold">Mini PC Pro G2</h3>
+                                     <p class="text-sm text-gray-600 mb-2">i5 12th Gen, 16GB RAM, 512GB SSD NVMe</p>
+                                     <p class="text-2xl font-extrabold text-rg-red mb-3">Consultar</p>
+                                     <button onclick="addToQuotation('Mini PC Pro G2 (Venta)');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                         Agregar a cotización
+                                     </button>
+                                 </div>
+                                 <!-- Laptop UltraBook 14" -->
+                                 <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-service-hardware">
+                                     <div class="h-24 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">Imagen Laptop</div>
+                                     <h3 class="text-xl font-bold">Laptop UltraBook 14"</h3>
+                                     <p class="text-sm text-gray-600 mb-2">i7, 32GB RAM, Diseño ligero, Batería extendida</p>
+                                     <p class="text-2xl font-extrabold text-rg-red mb-3">Consultar</p>
+                                     <button onclick="addToQuotation('Laptop UltraBook 14 (Venta)');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                         Agregar a cotización
+                                     </button>
+                                 </div>
+                             </div>
+                             
+                             <a href="#" onclick="showView('catalog'); return false;" class="inline-block text-service-hardware font-bold py-3 px-0 rounded-full hover:text-red-700 transition duration-300 mt-6">
+                                 Ver Catálogo Completo de Hardware &rarr;
+                             </a>
+                         </div>
+
+                         <!-- Servicios Adicionales -->
+                         <div class="lg:w-1/3 p-6 bg-gray-100 rounded-2xl shadow-inner space-y-6">
+                             <h3 class="text-2xl font-bold text-gray-900 border-b pb-2">Otros Equipos</h3>
+                             <ul class="list-disc list-inside text-lg text-gray-700 space-y-2 ml-4">
+                                 <li>PCs de Oficina y PCs Armadas.</li>
+                                 <li>Servidores pequeños y NAS para almacenamiento.</li>
+                                 <li>Accesorios Apple y periféricos de oficina.</li>
+                             </ul>
+                             <a href="#" onclick="fillQuotation('Venta de Hardware'); showView('quotation'); return false;" class="w-full inline-block bg-rg-red text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-rg-dark-red transition duration-300 text-center mt-6">
+                                 Solicitar Cotización Rápida
+                             </a>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+        </div>
+
+        <!-- VISTA 2.E: DETALLE DE ALQUILER DE EQUIPOS (#service-alquiler) - (Sin cambios, ya estaba bien) -->
+        <div id="service-alquiler" class="view">
+            <section class="py-16 md:py-24 bg-rg-cream">
+                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                     <h1 class="text-5xl font-extrabold text-service-alquiler text-center mb-4">
+                         Alquiler de Equipos Tecnológicos
+                     </h1>
+                     <p class="text-xl text-gray-600 text-center mb-16 max-w-4xl mx-auto">
+                         Soluciones de alquiler flexibles por semana o mes, ideales para eventos, capacitaciones o proyectos temporales.
+                     </p>
+                     
+                     <div class="lg:flex lg:space-x-12">
+                         <div class="lg:w-full">
+                             <h2 class="text-3xl font-bold text-gray-900 mb-6 border-b pb-2">Comparativa de Kits de Alquiler (Semanal)</h2>
+                              <table class="w-full text-left border-collapse bg-white rounded-xl shadow-lg">
+                                  <thead>
+                                      <tr class="bg-service-alquiler/20">
+                                          <th class="p-4 border-b-2">Plan</th>
+                                          <th class="p-4 border-b-2">Especificaciones (Ej.)</th>
+                                          <th class="p-4 border-b-2">Ideal Para</th>
+                                          <th class="p-4 border-b-2">Costo (Desde Semanal)</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <tr class="hover:bg-gray-50 transition duration-300">
+                                          <td class="p-4 border-b font-bold text-gray-800">Básico</td>
+                                          <td class="p-4 border-b">Mini PC i3 + 8GB RAM + Monitor FHD.</td>
+                                          <td class="p-4 border-b">Uso de Oficina, Call Center.</td>
+                                          <td class="p-4 border-b text-2xl font-extrabold text-rg-red">S/ 120</td>
+                                      </tr>
+                                      <tr class="hover:bg-gray-50 transition duration-300">
+                                          <td class="p-4 border-b font-bold text-gray-800">Intermedio</td>
+                                          <td class="p-4 border-b">Laptop i5 + 16GB RAM + Kit Software.</td>
+                                          <td class="p-4 border-b">Oficinas Temporales, Capacitaciones.</td>
+                                          <td class="p-4 border-b text-2xl font-extrabold text-rg-red">S/ 250</td>
+                                      </tr>
+                                      <tr class="hover:bg-gray-50 transition duration-300">
+                                          <td class="p-4 font-bold text-gray-800">Pro</td>
+                                          <td class="p-4">Workstation i7 + 32GB RAM / Equipos para Eventos.</td>
+                                          <td class="p-4">Diseño, Edición, Eventos de Gran Demanda.</td>
+                                          <td class="p-4 text-2xl font-extrabold text-rg-red">S/ 400+</td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                              
+                             <a href="#" onclick="fillQuotation('Alquiler de Equipos'); showView('quotation'); return false;" class="w-full inline-block bg-service-alquiler text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-purple-700 transition duration-300 text-center mt-8">
+                                 Cotizar Equipos de Alquiler
+                             </a>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+        </div>
+
+
+        <div id="quotation" class="view">
+                    <section class="py-16 md:py-24 bg-gray-50">
+                        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-4">
+                                Cotización Rápida y Profesional
+                            </h1>
+                            <p class="text-xl text-gray-600 text-center mb-12">
+                                Dinos qué necesitas y te enviaremos una propuesta detallada en menos de 24 horas.
+                            </p>
+                            
+                            <!-- FORMULARIO ACTUALIZADO PARA GOOGLE SHEETS -->
+                            <form id="quotation-form" class="bg-white p-8 md:p-10 rounded-2xl shadow-2xl ring-1 ring-gray-100"> 
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <!-- Nombre de Empresa (Con atributo name) -->
+                                    <div>
+                                        <label for="empresa" class="block text-sm font-medium text-gray-700 mb-2">Nombre de Empresa</label>
+                                        <input type="text" id="empresa" name="Empresa" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300">
+                                    </div>
+                                    <!-- Correo (Con atributo name) -->
+                                    <div>
+                                        <label for="quotation-email" class="block text-sm font-medium text-gray-700 mb-2">Correo Electrónico</label>
+                                        <input type="email" id="quotation-email" name="Correo" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300">
+                                    </div>
+                                    <!-- Teléfono (Con atributo name) -->
+                                    <div class="md:col-span-2">
+                                        <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">Teléfono / WhatsApp (999999999)</label>
+                                        <input type="tel" id="telefono" name="Telefono" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300">
+                                    </div>
+                                </div>
+
+                                <!-- Servicio Requerido (Checkbox - Más compacto y con NAME individual) -->
+                                <div class="mb-6 p-4 rounded-xl border border-gray-200 bg-gray-50">
+                                    <h3 class="text-lg font-bold text-gray-800 mb-3">Servicio que necesita (Selecciona uno o varios)</h3>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="Servicio_Automatizacion" value="Automatización de Procesos" class="form-checkbox text-service-auto h-4 w-4 rounded-md">
+                                            <span class="ml-2 text-sm text-gray-700">Automatización de Procesos</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="Servicio_Web" value="Desarrollo Web" class="form-checkbox text-service-web h-4 w-4 rounded-md">
+                                            <span class="ml-2 text-sm text-gray-700">Desarrollo Web</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="Servicio_Soporte" value="Soporte Técnico" class="form-checkbox text-service-soporte h-4 w-4 rounded-md">
+                                            <span class="ml-2 text-sm text-gray-700">Soporte Técnico Empresarial</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="Servicio_Venta" value="Venta de Hardware" class="form-checkbox text-service-hardware h-4 w-4 rounded-md">
+                                            <span class="ml-2 text-sm text-gray-700">Venta de Hardware</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="Servicio_Alquiler" value="Alquiler de Equipos" class="form-checkbox text-service-alquiler h-4 w-4 rounded-md">
+                                            <span class="ml-2 text-sm text-gray-700">Alquiler de Equipos</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <!-- Cantidad de Equipos (Con atributo name) -->
+                                    <div>
+                                        <label for="cantidad" class="block text-sm font-medium text-gray-700 mb-2">Cantidad (Equipos / Licencias)</label>
+                                        <input type="number" id="cantidad" name="Cantidad" value="1" min="1" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300">
+                                    </div>
+                                    <!-- Presupuesto (Con atributo name y value) -->
+                                    <div>
+                                        <label for="presupuesto" class="block text-sm font-medium text-gray-700 mb-2">Presupuesto Aproximado (S/)</label>
+                                        <select id="presupuesto" name="Presupuesto" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300">
+                                            <option value="Menos de S/ 1,000">Menos de S/ 1,000</option>
+                                            <option value="S/ 1,000 - S/ 3,000">S/ 1,000 - S/ 3,000</option>
+                                            <option value="S/ 3,000 - S/ 8,000">S/ 3,000 - S/ 8,000</option>
+                                            <option value="Más de S/ 8,000">Más de S/ 8,000</option>
+                                        </select>
+                                    </div>
+        </div>
+
+                        <!-- Mensaje (Con atributo name) -->
+                        <div class="mb-8">
+                            <label for="quotation-message" class="block text-sm font-medium text-gray-700 mb-2">Detalle su requerimiento</label>
+                            <textarea id="quotation-message" name="Detalle" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-rg-red focus:border-rg-red transition duration-300"></textarea>
+                        </div>
+                        
+                        <!-- Botones -->
+                        <div class="space-y-4">
+                            <button type="submit" class="w-full bg-rg-red text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:bg-rg-dark-red transition duration-300 transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-rg-red/50">
+                                Enviar Solicitud de Cotización
+                            </button>
+                            <a id="cotizar-whatsapp-btn" href="https://wa.me/51983519503?text=Hola%20RG%20Solutions,%20me%20gustaría%20cotizar%20un%20servicio." target="_blank" class="w-full inline-flex items-center justify-center bg-green-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-green-600 transition duration-300">
+                                <img src="img/Whatsapp.png" alt="Icono de WhatsApp" class="w-7 h-7 mr-3">
+                                Cotizar por WhatsApp
+                            </a>
+                        </div>
+                        <!-- Mensaje de confirmación (oculto por defecto) -->
+                        <div id="quotation-success-message" class="hidden mt-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl text-center font-medium">
+                            ¡Gracias! Tu solicitud ha sido enviada con éxito.
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </div>
+        <!-- VISTA 4: CATÁLOGO DE HARDWARE (#catalog)  -->
+        <div id="catalog" class="view">
+            <section class="py-16 md:py-24 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-4">
+                        Catálogo de Hardware Empresarial
+                    </h1>
+                    <p class="text-xl text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+                        Equipos de última generación, configurados para máxima eficiencia y durabilidad.
+                    </p>
+
+                    <!-- Secciones del Catálogo (Ejemplos Mock) -->
+                    <div class="space-y-16">
+                        
+                        <!-- Mini PC Section -->
+                        <div id="mini-pc-section">
+                            <h2 class="text-3xl font-bold border-b-2 border-rg-red pb-2 mb-8 text-rg-dark-bg">Mini PC</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Producto 1 -->
+                                <div class="bg-rg-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                        <span class="text-gray-500">Mini PC Imagen </span>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-1">Mini PC Pro G2</h3>
+                                    <p class="text-sm text-gray-600 mb-3">i5 12th Gen, 16GB RAM, 512GB SSD NVMe</p>
+                                    <p class="text-2xl font-extrabold text-rg-red mb-3">Consultar</p>
+                                    <button onclick="addToQuotation('Mini PC Pro G2');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Agregar a cotización
+                                    </button>
+                                </div>
+                                <!-- Producto 2 -->
+                                <div class="bg-rg-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                        <span class="text-gray-500">Mini PC Imagen </span>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-1">Office Mini S</h3>
+                                    <p class="text-sm text-gray-600 mb-3">Intel i3, 8GB RAM, 256GB SSD</p>
+                                    <p class="text-2xl font-extrabold text-gray-900 mb-3">S/ 1,850</p>
+                                    <button onclick="addToQuotation('Office Mini S');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Agregar a cotización
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Laptops Section -->
+                        <div id="laptops-section">
+                            <h2 class="text-3xl font-bold border-b-2 border-rg-red pb-2 mb-8 text-rg-dark-bg">Laptops Empresariales</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Producto 3 -->
+                                <div class="bg-rg-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                        <span class="text-gray-500">Laptop Imagen</span>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-1">Laptop UltraBook 14"</h3>
+                                    <p class="text-sm text-gray-600 mb-3">i7, 32GB RAM, Diseño ligero, Batería extendida</p>
+                                    <p class="text-2xl font-extrabold text-rg-red mb-3">Consultar</p>
+                                    <button onclick="addToQuotation('Laptop UltraBook 14');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Agregar a cotización
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Accesorios Section -->
+                        <div id="accesorios-section">
+                            <h2 class="text-3xl font-bold border-b-2 border-rg-red pb-2 mb-8 text-rg-dark-bg">Accesorios y Kits</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <!-- Producto 4 -->
+                                <div class="bg-rg-cream p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 border border-gray-100">
+                                    <div class="h-40 bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                                        <span class="text-gray-500">Monitor Imagen </span>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-1">Monitor 27" Curvo</h3>
+                                    <p class="text-sm text-gray-600 mb-3">4K, Ergonómico, Certificado Low Blue Light</p>
+                                    <p class="text-2xl font-extrabold text-gray-900 mb-3">S/ 1,499</p>
+                                    <button onclick="addToQuotation('Monitor 27 Curvo');" class="w-full bg-service-hardware text-white py-2 rounded-lg hover:bg-red-600 transition duration-300">
+                                        Agregar a cotización
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- VISTA 5: NOSOTROS (#about) - (ACTUALIZADA) -->
+        <div id="about" class="view">
+            <section class="py-16 md:py-24 bg-rg-cream">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-12">
+                        RG Solutions: Confianza y Tecnología
+                    </h1>
+
+                    <!-- NUEVAS CARTAS DE FUNDADORES -->
+                    <h2 class="text-3xl font-bold text-rg-dark-bg mb-8 text-center">Nuestro Equipo Fundador</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+                        <!-- Carta Robert -->
+                        <div class="bg-white p-6 rounded-2xl shadow-xl text-center border-t-4 border-rg-red transform hover:scale-105 transition duration-300">
+                            <div class="w-24 h-24 bg-rg-dark-bg text-white rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">
+                                RD'J
+                            </div>
+                            <h3 class="text-2xl font-bold text-rg-red">Robert D' Jesús Paredes García</h3>
+                            <p class="text-lg font-semibold text-gray-600 mb-3">Co-Fundador / XXXXXXX</p>
+                            <p class="text-gray-700">
+                                XXXXXXXXXXXXXXXXXXX
+                            </p>
+                        </div>
+                        <!-- Carta Gracia -->
+                        <div class="bg-white p-6 rounded-2xl shadow-xl text-center border-t-4 border-rg-red transform hover:scale-105 transition duration-300">
+                            <div class="w-24 h-24 bg-rg-dark-bg text-white rounded-full flex items-center justify-center mx-auto mb-4 text-4xl font-bold">
+                                GAM
+                            </div>
+                            <h3 class="text-2xl font-bold text-rg-red">Gracia Antuanette Marca Torres</h3>
+                            <p class="text-lg font-semibold text-gray-600 mb-3">Co-Fundadora / XXXXXXX</p>
+                            <p class="text-gray-700">
+                                XXXXXXXXXXXXXXXXXXXXXXXXXX
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- NUEVO DISEÑO DINÁMICO Misión, Visión, Valores -->
+                    <h2 class="text-3xl font-bold text-rg-dark-bg mb-8 mt-16 text-center">Nuestra Filosofía</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mb-16">
+                        <!-- Misión -->
+                        <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:shadow-2xl transition duration-300">
+                            <svg class="w-16 h-16 text-rg-red mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 100-18 9 9 0 000 18z"></path></svg>
+                            <h3 class="text-2xl font-bold text-rg-red mb-3">Misión</h3>
+                            <p class="text-gray-700">Simplificar y potenciar la operación de negocios a través de soluciones tecnológicas innovadoras y soporte experto.</p>
+                        </div>
+                        <!-- Visión -->
+                        <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:shadow-2xl transition duration-300">
+                            <svg class="w-16 h-16 text-rg-red mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                            <h3 class="text-2xl font-bold text-rg-red mb-3">Visión</h3>
+                            <p class="text-gray-700">Ser el referente tecnológico en Latam, conocidos por nuestra ética, rapidez y la excelencia en cada implementación.</p>
+                        </div>
+                        <!-- Valores -->
+                        <div class="bg-white p-8 rounded-xl shadow-lg text-center transform hover:shadow-2xl transition duration-300">
+                            <svg class="w-16 h-16 text-rg-red mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            <h3 class="text-2xl font-bold text-rg-red mb-3">Valores</h3>
+                            <p class="text-gray-700">Integridad, Rapidez en Respuesta, Calidad de Servicio y Enfoque en el Resultado del Cliente.</p>
+                        </div>
+                    </div>
+
+                    <!-- Por qué Elegirnos / Diferenciales -->
+                    <div class="bg-rg-dark-bg text-white p-8 rounded-2xl shadow-2xl">
+                        <h2 class="text-3xl font-extrabold text-rg-red mb-6">Por Qué Elegir RG Solutions</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <svg class="w-6 h-6 text-service-web mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.617 7.08c-.687-.69-.974-1.57-.962-2.522.016-1.127.319-2.18.917-3.085.6-.905.932-1.954.916-3.081.012-.952-.275-1.832-.962-2.522l-.707-.707c-.41-.41-.707-1.01-.707-1.707V3a1 1 0 00-1-1h-6a1 1 0 00-1 1v.707c0 .69-.297 1.29-.707 1.707l-.707.707c-.687.69-.974 1.57-.962 2.522.016 1.127.319 2.18.917 3.085.6.905.932 1.954.916 3.081.012.952-.275 1.832-.962 2.522l-.707.707c-.41.41-.707 1.01-.707 1.707V21a1 1 0 001 1h6a1 1 0 001-1v-.707c0-.69.297-1.29.707-1.707l.707-.707z"></path></svg>
+                                    <p class="font-semibold">Soporte Humano 24/7</p>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-6 h-6 text-service-web mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                    <p class="font-semibold">Rapidez en Ejecución</p>
+                                </li>
+                            </ul>
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <svg class="w-6 h-6 text-service-web mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2-3-.895-3-2 1.343-2 3-2zM9 18h6M4 21h16a2 2 0 002-2v-2a2 2 0 00-2-2H4a2 2 0 00-2 2v2a2 2 0 002 2z"></path></svg>
+                                    <p class="font-semibold">Personal Experto Certificado</p>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-6 h-6 text-service-web mr-3 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.313 2.687 6 6 6s6-2.687 6-6-2.687-6-6-6-6 2.687-6 6zm0 0v-4"></path></svg>
+                                    <p class="font-semibold">Precios Competitivos y Transparentes</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+        
+        <!-- VISTA 6: CONTACTO Y TESTIMONIOS (#contact) - (Sin cambios, ya estaba bien) -->
+        <div id="contact" class="view">
+            <section class="py-16 md:py-24 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <h1 class="text-4xl font-extrabold text-gray-900 text-center mb-4">
+                        Hablemos de tu Próximo Proyecto
+                    </h1>
+                    <p class="text-xl text-gray-600 text-center mb-16">
+                        Estamos listos para atenderte y resolver todas tus dudas.
+                    </p>
+
+                    <!-- Sección de Testimonios
+                    <div class="mb-20">
+                        <h2 class="text-3xl font-bold text-gray-900 text-center mb-10">Lo que Dicen Nuestros Clientes</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            
+                            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-service-auto">
+                                <p class="italic text-gray-700 mb-4">"La implementación del chatbot redujo nuestro tiempo de respuesta en un 60%. ¡Un cambio espectacular en nuestra atención!"</p>
+                                <p class="font-semibold text-rg-red">- Juan C., Gerente de Ventas de Logística X</p>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-service-web">
+                                <p class="italic text-gray-700 mb-4">"Nuestra nueva web es limpia, rápida y convierte más. El equipo de RG Solutions superó las expectativas de diseño y funcionalidad."</p>
+                                <p class="font-semibold text-rg-red">- María L., Directora de Marketing de FinTech Co.</p>
+                            </div>
+                            
+                            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-service-hardware">
+                                <p class="italic text-gray-700 mb-4">"El alquiler de Mini PCs fue la solución perfecta y económica para nuestro pico de temporada. Soporte técnico al instante."</p>
+                                <p class="font-semibold text-rg-red">- Carlos P., Administración de Retail Pro</p>
+                            </div>
+                        </div>
+                    </div> -->
+
+                    <!-- Datos de Contacto y Formulario -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        
+                        <!-- Columna de Información -->
+                        <div class="lg:col-span-1 space-y-8">
+                            <div>
+                                <h3 class="text-xl font-bold text-rg-red mb-2">WhatsApp Directo</h3>
+                                <a href="https://wa.me/51983519503" target="_blank" class="text-lg text-gray-700 hover:text-green-500 transition duration-300">999999999</a>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-rg-red mb-2">Correo Electrónico</h3>
+                                <p class="text-lg text-gray-700">contacto@rgsolutions.com.pe</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-rg-red mb-2">Horarios de Atención</h3>
+                                <p class="text-lg text-gray-700">Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+                                <p class="text-lg text-gray-700">Sábados: 9:00 AM - 1:00 PM</p>
+                            </div>
+                        </div>
+
+                        <!-- Columna de Formulario (Mismo formulario de la vista de Cotización) -->
+                        <div class="lg:col-span-2">
+                            <h3 class="text-2xl font-bold text-gray-900 mb-6 border-b pb-2">Envíanos un Mensaje Rápido</h3>
+                            <form id="contact-form-final" class="bg-white p-6 rounded-xl shadow-lg">
+                                <div class="mb-4">
+                                    <label for="c-name" class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                                    <input type="text" id="c-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rg-red focus:border-rg-red">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="c-email" class="block text-sm font-medium text-gray-700 mb-2">Correo</label>
+                                    <input type="email" id="c-email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rg-red focus:border-rg-red">
+                                </div>
+                                <div class="mb-6">
+                                    <label for="c-message" class="block text-sm font-medium text-gray-700 mb-2">Tu Mensaje</label>
+                                    <textarea id="c-message" rows="4" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-rg-red focus:border-rg-red"></textarea>
+                                </div>
+                                <button type="submit" class="w-full bg-rg-red text-white font-bold py-3 rounded-lg hover:bg-rg-dark-red transition duration-300">
+                                    Enviar Mensaje
+                                </button>
+                                <div id="contact-success-message" class="hidden mt-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center font-medium">
+                                    ¡Mensaje enviado! Te responderemos pronto.
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-4">
+                <a href="#" onclick="showView('home'); return false;" class="flex items-center justify-center space-x-2 text-rg-red hover:text-white transition duration-300">
+                    <span class="logo-icon bg-gray-900"></span>
+                    <span class="text-2xl font-extrabold tracking-wider">RG Solutions</span>
+                </a>
+            </div>
+            <div class="text-gray-400 text-base space-x-6 mb-4">
+                <a href="#" onclick="showView('services'); return false;" class="hover:text-rg-red transition duration-300">Servicios</a>
+                <a href="#" onclick="showView('catalog'); return false;" class="hover:text-rg-red transition duration-300">Catálogo</a>
+                <a href="#" onclick="showView('about'); return false;" class="hover:text-rg-red transition duration-300">Nosotros</a>
+                <a href="#" onclick="showView('contact'); return false;" class="hover:text-rg-red transition duration-300">Contacto</a>
+            </div>
+            <p class="text-gray-500 text-sm mt-6">
+                Impulsando la innovación. &copy; 2025 RG Solutions. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+ <script>
+        // *** 1. CONFIGURACIÓN CRÍTICA: URL DEL APPS SCRIPT ***
+        // Esta URL es tu endpoint de Google Sheets.
+        const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7XqyL4j6VorQr5GeH7RibnqA34V3t7MyMZ5m7P9e95s9JjbuGhNUmUo4CJG2FSjgf/exec"; 
+        
+        // === Lógica de Single Page Application (SPA) ===
+        const views = document.querySelectorAll('.view');
+        let currentView = 'home';
+        const notificationMessage = document.getElementById('notification-message');
+
+        function showNotification(message) {
+            notificationMessage.textContent = message;
+            notificationMessage.classList.remove('hidden');
+            notificationMessage.classList.add('notification-show');
+
+            setTimeout(() => {
+                notificationMessage.classList.remove('notification-show');
+                // Ocultar completamente después de la animación de salida
+                setTimeout(() => {
+                    notificationMessage.classList.add('hidden');
+                }, 300); 
+            }, 3000); // Duración total de la notificación visible
+        }
+
+        function showView(viewName) {
+            // Oculta todas las vistas
+            views.forEach(view => view.classList.remove('active'));
+            
+            // Muestra la vista solicitada
+            const targetView = document.getElementById(viewName);
+            if (targetView) {
+                targetView.classList.add('active');
+                currentView = viewName;
+                window.scrollTo(0, 0); // Regresa al inicio de la página
+                
+                // Gestionar el slider
+                const isHome = viewName === 'home';
+                if (isHome) {
+                    if (!slideInterval) {
+                        startSlider();
+                    }
+                } else {
+                    clearInterval(slideInterval);
+                    slideInterval = null;
+                }
+            }
+        }
+        
+        function closeMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.add('hidden');
+        }
+
+        // Función para pre-llenar la cotización desde el Catálogo o Servicios
+        function fillQuotation(serviceName) {
+            showView('quotation');
+            // Selector para todos los checkboxes de servicio
+            const checkboxes = document.querySelectorAll('#quotation-form input[name^="Servicio_"]'); 
+            
+            // Limpia todas las selecciones anteriores
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // Determinar el servicio general para marcar la casilla
+            let generalService = '';
+            if (serviceName.includes('Paquete Web')) { generalService = 'Desarrollo Web'; } 
+            else if (serviceName.includes('Alquiler')) { generalService = 'Alquiler de Equipos'; } 
+            else if (serviceName.includes('Venta')) { generalService = 'Venta de Hardware'; } 
+            else { generalService = serviceName; }
+
+            // Marcar la casilla del servicio general
+            checkboxes.forEach(cb => {
+                if (cb.value.includes(generalService)) {
+                    cb.checked = true;
+                }
+            });
+            
+            // Llenar el mensaje
+            document.getElementById('quotation-message').value = `Solicitud de cotización para: ${serviceName}. Por favor, detallar los siguientes pasos.`;
+        }
+        
+        // Función para agregar al carrito (simula el pre-llenado de cotización)
+        function addToQuotation(productName) {
+            fillQuotation('Venta de Hardware'); // Asume que un producto es venta/alquiler
+            document.getElementById('quotation-message').value += `\nProducto de interés adicional: ${productName}. Se requieren 1 unidad.`;
+            showNotification(`¡${productName} agregado a tu lista de cotización!`);
+        }
+
+
+        // === Lógica del Slider ===
+        const slides = document.querySelectorAll('.slider-item');
+        const dots = document.querySelectorAll('.slider-dot');
+        const prevButton = document.getElementById('prev-slide');
+        const nextButton = document.getElementById('next-slide');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            if (slides.length > 0) {
+                if (index >= slides.length) {
+                    currentSlide = 0;
+                } else if (index < 0) {
+                    currentSlide = slides.length - 1;
+                } else {
+                    currentSlide = index;
+                }
+
+                slides.forEach((slide) => slide.classList.remove('active'));
+                dots.forEach((dot) => {
+                    dot.classList.remove('opacity-100', 'bg-rg-red', 'scale-125');
+                    dot.classList.add('opacity-50', 'bg-white');
+                });
+
+                slides[currentSlide].classList.add('active');
+                dots[currentSlide].classList.remove('opacity-50', 'bg-white');
+                dots[currentSlide].classList.add('opacity-100', 'bg-rg-red', 'scale-125');
+            }
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        function startSlider() {
+            if (slides.length > 0) {
+                showSlide(currentSlide);
+                slideInterval = setInterval(nextSlide, 5000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+             // Iniciar el slider solo si estamos en la vista 'home'
+             if (currentView === 'home' && slides.length > 0) {
+                 startSlider();
+             }
+
+             // Manejadores de eventos para el slider
+             if (nextButton) {
+                 nextButton.addEventListener('click', () => {
+                     clearInterval(slideInterval);
+                     nextSlide();
+                     slideInterval = setInterval(nextSlide, 5000);
+                 });
+             }
+             if (prevButton) {
+                 prevButton.addEventListener('click', () => {
+                     clearInterval(slideInterval);
+                     prevSlide();
+                     slideInterval = setInterval(nextSlide, 5000);
+                 });
+             }
+             dots.forEach(dot => {
+                 dot.addEventListener('click', (event) => {
+                     const slideIndex = parseInt(event.target.dataset.slide);
+                     clearInterval(slideInterval);
+                     showSlide(slideIndex);
+                     slideInterval = setInterval(nextSlide, 5000);
+                 });
+             });
+
+             // Lógica del Menú Móvil
+             document.getElementById('mobile-menu-button').addEventListener('click', () => {
+                 document.getElementById('mobile-menu').classList.toggle('hidden');
+             });
+        });
+
+
+        // === Lógica de ENVÍO ASÍNCRONO a APPS SCRIPT (MÉTODO FETCH) ===
+
+        // 1. Formulario de Contacto General (SIMULADO - Deja esta lógica o cámbiala por fetch si tienes URL)
+        document.getElementById('contact-form-final').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            document.getElementById('contact-form-final').style.display = 'none';
+            document.getElementById('contact-success-message').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('contact-success-message').classList.add('hidden');
+                document.getElementById('contact-form-final').style.display = 'block';
+                document.getElementById('contact-form-final').reset();
+            }, 5000);
+        });
+
+        // 2. Formulario de Cotización (*** LÓGICA DE ENVÍO REAL Y CORREGIDA ***)
+        document.getElementById('quotation-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Detiene el envío tradicional
+            
+            const form = event.target;
+            const submitButton = form.querySelector('button[type="submit"]');
+            const statusMessage = document.getElementById('quotation-success-message');
+
+            // 1. Deshabilitar botón y mostrar estado de carga
+            submitButton.textContent = 'Enviando...';
+            submitButton.disabled = true;
+            statusMessage.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+            statusMessage.classList.add('bg-yellow-100', 'text-yellow-700');
+            statusMessage.textContent = 'Procesando envío a RG Solutions...';
+
+            // 2. Recolectar datos con tratamiento especial para checkboxes
+            const formData = new FormData(form);
+            const params = {};
+            let serviciosSeleccionados = [];
+            
+            // Recorrer el FormData para agrupar los servicios y el resto de campos
+            for (let [key, value] of formData.entries()) {
+                if (key.startsWith('Servicio_')) {
+                    // Si el campo empieza con 'Servicio_', lo añadimos a la lista
+                    serviciosSeleccionados.push(value);
+                } else {
+                    // Si es cualquier otro campo (Empresa, Correo, etc.), lo añadimos a los parámetros
+                    params[key] = value;
+                }
+            }
+
+            // AÑADIR el campo de servicios combinados (separados por |)
+            // Este campo es el que tu Apps Script debe leer (e.parameter.Servicios)
+            params['Servicios'] = serviciosSeleccionados.join(' | ');
+
+
+            // 3. Enviar datos a Apps Script mediante Fetch
+            try {
+                // AQUÍ ES DONDE SE USA LA URL: APP_SCRIPT_URL
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', 
+                    // Se envía como application/x-www-form-urlencoded
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(params).toString()
+                });
+
+                // 4. Mostrar mensaje de éxito
+                statusMessage.classList.remove('bg-yellow-100', 'text-yellow-700');
+                statusMessage.classList.add('bg-green-100', 'text-green-700');
+                statusMessage.textContent = '¡Gracias! Tu solicitud ha sido enviada con éxito a Google Sheets.';
+                
+                form.reset(); // Limpiar el formulario
+                
+            } catch (error) {
+                // 4. Mostrar mensaje de error
+                statusMessage.classList.remove('bg-yellow-100', 'text-yellow-700');
+                statusMessage.classList.add('bg-red-100', 'text-red-700');
+                statusMessage.textContent = 'Error al enviar la solicitud. Por favor, revisa tu conexión.';
+                console.error('Error de Fetch:', error);
+            } finally {
+                // 5. Restablecer el botón
+                submitButton.textContent = 'Enviar Solicitud de Cotización';
+                submitButton.disabled = false;
+                
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 8000);
+            }
+        });
+
+        // 3. WhatsApp en la Cotización (Adjuntar datos al mensaje de WA)
+        document.getElementById('cotizar-whatsapp-btn').addEventListener('click', function(event) {
+            const empresa = document.getElementById('empresa').value || 'No especificado';
+            const email = document.getElementById('quotation-email').value || 'No especificado';
+            const telefono = document.getElementById('telefono').value || 'No especificado';
+            const mensaje = document.getElementById('quotation-message').value || 'Sin detalles adicionales.';
+
+            // Recolectar los servicios seleccionados para WhatsApp
+            let servicios = [];
+            document.querySelectorAll('#quotation-form input[name^="Servicio_"]:checked').forEach(cb => {
+                servicios.push(cb.value);
+            });
+            const servicioList = servicios.join(', ') || 'Ninguno seleccionado';
+
+            const waText = `¡Hola RG Solutions! Mi empresa *${empresa}* está solicitando una cotización.
+            *Correo:* ${email}
+            *Teléfono:* ${telefono}
+            *Servicios de interés:* ${servicioList}
+            *Detalles del requerimiento:*
+            ${mensaje}`;
+            
+            event.currentTarget.href = `https://wa.me/51983519503?text=${encodeURIComponent(waText)}`;
+            
+            showNotification('Redirigiendo a WhatsApp con los datos del formulario...');
+        });
+    </script>
+</body>
+</html>
