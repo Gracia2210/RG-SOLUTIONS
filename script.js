@@ -273,11 +273,11 @@
         const servicioList = servicios.join(', ') || 'Ninguno seleccionado';
 
         const waText = `¡Hola RG Solutions! Mi empresa *${empresa}* está solicitando una cotización.
-*Correo:* ${email}
-*Teléfono:* ${telefono}
-*Servicios de interés:* ${servicioList}
-*Detalles del requerimiento:*
-${mensaje}`;
+            *Correo:* ${email}
+            *Teléfono:* ${telefono}
+            *Servicios de interés:* ${servicioList}
+            *Detalles del requerimiento:*
+            ${mensaje}`;
         
         event.currentTarget.href = `https://wa.me/51983519503?text=${encodeURIComponent(waText)}`;
         
